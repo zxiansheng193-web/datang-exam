@@ -32,11 +32,39 @@
   color: #999;
 }
 
-.score-label {
-  display: block;
+.score-label-text {
+  font-size: 40rpx;
+  color: #999;
+}
+
+/* 工资提升提示样式 */
+.salary-tip {
+  margin: 30rpx auto;
+  padding: 24rpx 30rpx;
+  border-radius: 16rpx;
   font-size: 28rpx;
-  color: #666;
-  margin-bottom: 40rpx;
+  font-weight: bold;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.salary-high {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.salary-medium {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.salary-low {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.salary-tip-text {
+  font-size: 32rpx;
+  font-weight: bold;
 }
 
 .info-row {

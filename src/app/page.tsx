@@ -100,6 +100,7 @@ export default function ExamSystem() {
     try {
       let earnedScore = 0;
       let total = 0;
+      let correctCount = 0;
       const userAnswers: UserAnswer[] = [];
 
       currentQuestions.forEach((q, idx) => {
@@ -111,6 +112,7 @@ export default function ExamSystem() {
           // 客观题自动评分
           if (userAnswer === q.answer) {
             earnedScore += q.score;
+            correctCount++;
           }
         } else if (q.type === 4) {
           // 填空题评分
@@ -123,13 +125,19 @@ export default function ExamSystem() {
               break;
             }
           }
-          if (allMatch) earnedScore += q.score;
+          if (allMatch) {
+            earnedScore += q.score;
+            correctCount++;
+          }
         }
         // 主观题不计分
       });
 
-      setScore(earnedScore);
-      setTotalScore(total);
+      // 按100分制计算得分
+      const finalScore = total > 0 ? Math.round((earnedScore / total) * 100) : 0;
+
+      setScore(finalScore);
+      setTotalScore(100);
       setDuration(timer);
       setExamSubmitted(true);
 
@@ -407,10 +415,34 @@ export default function ExamSystem() {
           <Card className="mb-6 shadow-lg border-2 border-green-500">
             <CardContent className="pt-6 text-center">
               <div className="text-4xl font-bold text-green-600 mb-2">
-                客观题得分：{score}/{totalScore}
+                考试得分：{score}分
               </div>
+
+              {/* 工资提升提示 */}
+              {score >= 96 && (
+                <Alert className="mb-4 bg-green-50 dark:bg-green-900/20 border-green-500">
+                  <AlertDescription className="text-lg font-semibold text-green-700 dark:text-green-400">
+                    🎉 恭喜您工资提升500元！
+                  </AlertDescription>
+                </Alert>
+              )}
+              {score >= 90 && score <= 95 && (
+                <Alert className="mb-4 bg-blue-50 dark:bg-blue-900/20 border-blue-500">
+                  <AlertDescription className="text-lg font-semibold text-blue-700 dark:text-blue-400">
+                    🎊 恭喜您工资提升200元！
+                  </AlertDescription>
+                </Alert>
+              )}
+              {score >= 80 && score <= 89 && (
+                <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
+                  <AlertDescription className="text-lg font-semibold text-yellow-700 dark:text-yellow-400">
+                    🎯 恭喜您工资提升100元！
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <p className="text-gray-600 dark:text-gray-300">
-                用时：{formatTime(duration)} | 主观题请人工评阅
+                用时：{formatTime(duration)} | 题目数量：{currentQuestions.length}题
               </p>
               <div className="mt-4 space-x-2">
                 <Button onClick={resetExam} variant="outline">

@@ -237,10 +237,13 @@ Page({
         }
       });
 
+      // 按100分制计算得分
+      const finalScore = totalScore > 0 ? Math.round((earnedScore / totalScore) * 100) : 0;
+
       this.setData({
         submitted: true,
-        score: earnedScore,
-        totalScore: totalScore
+        score: finalScore,
+        totalScore: 100
       });
 
       // 保存考试记录
@@ -248,8 +251,8 @@ Page({
         await app.saveExamRecord({
           name: this.data.name,
           role: this.data.role,
-          score: earnedScore,
-          totalScore: totalScore,
+          score: finalScore,
+          totalScore: 100,
           duration: this.data.timerSeconds || 0,
           answers: userAnswers
         });
@@ -269,7 +272,7 @@ Page({
         // 跳转到结果页面
         setTimeout(() => {
           wx.redirectTo({
-            url: `/pages/result/result?score=${earnedScore}&totalScore=${totalScore}&duration=${this.data.timerSeconds || 0}`
+            url: `/pages/result/result?score=${finalScore}&totalScore=100&duration=${this.data.timerSeconds || 0}`
           });
         }, 2000);
       }, 500);

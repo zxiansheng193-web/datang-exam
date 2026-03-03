@@ -6,10 +6,19 @@
 
     <view class="score-display">
       <text class="score-value">{{score}}</text>
-      <text class="score-total">/ {{totalScore}}</text>
+      <text class="score-label-text">分</text>
     </view>
 
-    <text class="score-label">客观题得分</text>
+    <!-- 工资提升提示 -->
+    <view wx:if="{{score >= 96}}" class="salary-tip salary-high">
+      <text class="salary-tip-text">🎉 恭喜您工资提升500元！</text>
+    </view>
+    <view wx:elif="{{score >= 90}}" class="salary-tip salary-medium">
+      <text class="salary-tip-text">🎊 恭喜您工资提升200元！</text>
+    </view>
+    <view wx:elif="{{score >= 80}}" class="salary-tip salary-low">
+      <text class="salary-tip-text">🎯 恭喜您工资提升100元！</text>
+    </view>
 
     <view class="info-row">
       <text class="info-label">考生姓名：</text>
@@ -27,8 +36,8 @@
     </view>
 
     <view class="info-row">
-      <text class="info-label">得分率：</text>
-      <text class="info-value {{scoreClass}}">{{percentage}}%</text>
+      <text class="info-label">题目数量：</text>
+      <text class="info-value">45题</text>
     </view>
 
     <view class="btn" bindtap="backToHome">返回首页</view>
@@ -36,6 +45,6 @@
   </view>
 
   <view class="footer">
-    <text class="footer-text">主观题请人工评阅</text>
+    <text class="footer-text">客观题自动评分，满分100分</text>
   </view>
 </view>
