@@ -199,20 +199,44 @@ export const roleNames: { [key: string]: string } = {
   storekeeper: "库房管理员",
 };
 
-// 随机抽取题目函数
+// 随机抽取题目函数（确保至少包含2道主观题）
 export function getRandomQuestions(role: string, count: number = 45): Question[] {
   const allQuestions = questionBankFull[role] || [];
-  
+
   if (allQuestions.length <= count) {
     return allQuestions;
   }
-  
-  // Fisher-Yates 洗牌算法
-  const shuffled = [...allQuestions];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+
+  // 分离主观题（type 5,6,7）和客观题（type 1,2,3,4）
+  const subjectiveQuestions = allQuestions.filter(q => [5, 6, 7].includes(q.type));
+  const objectiveQuestions = allQuestions.filter(q => ![5, 6, 7].includes(q.type));
+
+  // 确保主观题至少有2道，否则使用全部主观题
+  const subjectiveCount = Math.min(2, subjectiveQuestions.length);
+
+  // 随机抽取主观题
+  const shuffledSubjective = [...subjectiveQuestions];
+  for (let i = shuffledSubjective.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [shuffledSubjective[i], shuffledSubjective[j]] = [shuffledSubjective[j], shuffledSubjective[i]];
   }
-  
-  return shuffled.slice(0, count);
+  const selectedSubjective = shuffledSubjective.slice(0, subjectiveCount);
+
+  // 随机抽取客观题，补足到count题
+  const remainingCount = count - subjectiveCount;
+  const shuffledObjective = [...objectiveQuestions];
+  for (let i = shuffledObjective.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledObjective[i], shuffledObjective[j]] = [shuffledObjective[j], shuffledObjective[i]];
+  }
+  const selectedObjective = shuffledObjective.slice(0, remainingCount);
+
+  // 合并并再次打乱顺序
+  const result = [...selectedSubjective, ...selectedObjective];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
 }

@@ -27,6 +27,7 @@ export default function ExamSystem() {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map());
   const [score, setScore] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
+  const [subjectiveScores, setSubjectiveScores] = useState<Map<number, number>>(new Map()); // 主观题得分
   const [duration, setDuration] = useState(0);
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -308,6 +309,29 @@ export default function ExamSystem() {
                 <p className="text-sm text-muted-foreground mt-2">
                   <strong>参考答案：</strong>{correctAnswerText}
                 </p>
+                <div className="mt-4 flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`subjective-score-${idx}`} className="font-medium">
+                      得分：
+                    </Label>
+                    <Input
+                      id={`subjective-score-${idx}`}
+                      type="number"
+                      min="0"
+                      max={q.score}
+                      step="0.5"
+                      value={subjectiveScores.get(idx) || 0}
+                      onChange={(e) => {
+                        const newScores = new Map(subjectiveScores);
+                        const val = parseFloat(e.target.value);
+                        newScores.set(idx, isNaN(val) ? 0 : val);
+                        setSubjectiveScores(newScores);
+                      }}
+                      className="w-24"
+                    />
+                    <span className="text-sm text-gray-600">/ {q.score}分</span>
+                  </div>
+                </div>
               </AlertDescription>
             </Alert>
           )}
@@ -371,15 +395,6 @@ export default function ExamSystem() {
               >
                 开始考试
               </Button>
-
-              <div className="text-center pt-4">
-                <Link
-                  href="/admin/login"
-                  className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                >
-                  进入后台管理系统
-                </Link>
-              </div>
             </CardContent>
           </Card>
         </div>
@@ -422,35 +437,32 @@ export default function ExamSystem() {
             <Card className="mb-6 shadow-lg border-2 border-green-500 print-hide">
               <CardContent className="pt-6 text-center">
                 <div className="text-4xl font-bold text-green-600 mb-2">
-                  客观题得分：{score}分 / 94分
+                  总分：{score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)}分 / 100分
                 </div>
 
-                {/* 主观题待评分提示 */}
-                <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
-                  <AlertDescription className="text-base font-semibold text-yellow-700 dark:text-yellow-400">
-                    ⏳ 主观题（简答题）需后台人工评分，满分6分
-                  </AlertDescription>
-                </Alert>
+                <div className="text-lg text-gray-600 mb-4">
+                  客观题得分：{score}分 / 94分 | 主观题得分：{Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)}分 / 6分
+                </div>
 
                 {/* 工资提升提示 */}
-                {score >= 90 && (
+                {(score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 90 && (
                   <Alert className="mb-4 bg-green-50 dark:bg-green-900/20 border-green-500">
                     <AlertDescription className="text-lg font-semibold text-green-700 dark:text-green-400">
-                      🎉 恭喜您！客观题得分优秀，工资提升500元！
+                      🎉 恭喜您！成绩优秀，工资提升500元！
                     </AlertDescription>
                   </Alert>
                 )}
-                {score < 90 && score >= 80 && (
+                {(score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) < 90 && (score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 80 && (
                   <Alert className="mb-4 bg-blue-50 dark:bg-blue-900/20 border-blue-500">
                     <AlertDescription className="text-lg font-semibold text-blue-700 dark:text-blue-400">
                       👍 继续努力！成绩良好，工资提升300元！
                     </AlertDescription>
                   </Alert>
                 )}
-                {score < 80 && (
+                {(score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) < 80 && (
                   <Alert className="mb-4 bg-red-50 dark:bg-red-900/20 border-red-500">
                     <AlertDescription className="text-lg font-semibold text-red-700 dark:text-red-400">
-                      ⚠️ 客观题成绩未达标，需要再次考试
+                      ⚠️ 成绩未达标，需要再次考试
                     </AlertDescription>
                   </Alert>
                 )}
@@ -482,7 +494,8 @@ export default function ExamSystem() {
             <Card className="print-score-card hidden">
               <CardContent className="pt-6">
                 <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold mb-2">大唐环宇名车岗位技能考试成绩单</h1>
+                  <img src="/logo.png" alt="大唐环宇" className="w-24 h-24 mx-auto mb-4 object-contain" />
+                  <h1 className="text-3xl font-bold mb-2">大唐环宇名车岗位技能考试得分</h1>
                   <div className="w-32 h-1 bg-black mx-auto"></div>
                 </div>
 
@@ -510,8 +523,14 @@ export default function ExamSystem() {
                   <div className="flex justify-between border-b pb-2">
                     <span className="font-semibold">工资提升：</span>
                     <span className="font-bold text-xl">
-                      {score >= 90 ? '500元' : score >= 80 ? '300元' : '0元（未达标）'}
+                      {(score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 90 ? '500元' : (score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 80 ? '300元' : '0元（未达标）'}
                     </span>
+                  </div>
+                </div>
+
+                <div className="mt-12 mb-8">
+                  <div className="flex justify-center">
+                    <img src="/logo.png" alt="大唐环宇印章" className="w-32 h-32 object-contain" />
                   </div>
                 </div>
 
