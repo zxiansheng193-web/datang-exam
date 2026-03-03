@@ -133,10 +133,8 @@ export default function ExamSystem() {
         // 主观题不计分
       });
 
-      // 按100分制计算得分
-      const finalScore = total > 0 ? Math.round((earnedScore / total) * 100) : 0;
-
-      setScore(finalScore);
+      // 总分已经是100分，直接使用实际得分
+      setScore(earnedScore);
       setTotalScore(100);
       setDuration(timer);
       setExamSubmitted(true);
