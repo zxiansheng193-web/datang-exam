@@ -83,17 +83,17 @@ export default function RootLayout({
               background: white !important;
             }
             
-            /* 隐藏所有元素 */
-            body * {
-              visibility: hidden !important;
+            /* 隐藏body的所有直接子元素（除了.print-score-card） */
+            body > *:not(.print-score-card) {
+              display: none !important;
             }
             
-            /* 只显示打印卡片 */
+            /* 显示打印卡片 */
             .print-score-card {
-              visibility: visible !important;
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
+              display: block !important;
+              position: relative !important;
+              left: auto !important;
+              top: auto !important;
               width: 100% !important;
               height: auto !important;
               padding: 20px !important;
@@ -101,12 +101,8 @@ export default function RootLayout({
               background: white !important;
               border: none !important;
               box-shadow: none !important;
-              pointer-events: auto !important;
-            }
-            
-            /* 显示打印卡片内的所有内容 */
-            .print-score-card * {
-              visibility: visible !important;
+              page-break-after: avoid !important;
+              page-break-before: avoid !important;
             }
           }
         `}</style>
