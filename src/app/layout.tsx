@@ -68,31 +68,39 @@ export default function RootLayout({
       <head>
         <style>{`
           @media print {
-            /* 隐藏所有不需要打印的元素 */
-            body > *:not(.print-score-card) {
-              display: none !important;
+            /* 隐藏所有元素 */
+            body * {
+              visibility: hidden;
             }
-            /* 隐藏body的直接子元素（除了print-score-card） */
-            body > div:not(.print-score-card) {
-              display: none !important;
+            /* 只显示打印成绩单卡片及其内容 */
+            .print-score-card,
+            .print-score-card * {
+              visibility: visible;
             }
-            /* 显示打印专用成绩单卡片 */
+            /* 定位打印成绩单卡片 - 强制覆盖hidden类 */
             .print-score-card {
               display: block !important;
-              position: fixed !important;
-              top: 0 !important;
+              position: absolute !important;
               left: 0 !important;
+              top: 0 !important;
               width: 100% !important;
-              height: 100% !important;
+              height: auto !important;
+              min-height: 100vh !important;
               padding: 40px !important;
               background: white !important;
               z-index: 10000 !important;
-              overflow: auto !important;
+              visibility: visible !important;
             }
-            /* 隐藏打印版本中的按钮和隐藏类元素 */
-            .print-score-card button,
-            .print-score-card .print-hide {
-              display: none !important;
+            /* 确保背景色打印 */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            /* 隐藏滚动条和多余元素 */
+            body {
+              overflow: visible !important;
+              margin: 0 !important;
+              padding: 0 !important;
             }
           }
         `}</style>
