@@ -78,6 +78,127 @@ export default function ExamSystem() {
     setDuration(0);
   };
 
+  const printScore = () => {
+    const finalScore = score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0);
+    
+    const printContent = `
+      <html>
+        <head>
+          <title>成绩单</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 40px;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 28px;
+              color: #333;
+            }
+            .logo {
+              width: 100px;
+              height: 100px;
+              margin-bottom: 20px;
+            }
+            .info-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px 0;
+              border-bottom: 1px solid #ddd;
+              font-size: 18px;
+            }
+            .info-label {
+              font-weight: bold;
+            }
+            .info-value {
+              text-align: right;
+            }
+            .stamp {
+              text-align: center;
+              margin: 40px 0;
+            }
+            .stamp img {
+              width: 120px;
+              height: 120px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              font-size: 14px;
+              color: #666;
+            }
+            @media print {
+              body {
+                margin: 0;
+                padding: 20px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <img src="/logo.png" alt="大唐环宇" class="logo" />
+            <h1>大唐环宇名车岗位技能考试得分</h1>
+            <div style="width: 150px; height: 2px; background: black; margin: 10px auto;"></div>
+          </div>
+          
+          <div class="info-row">
+            <span class="info-label">姓名：</span>
+            <span class="info-value">${name}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">岗位：</span>
+            <span class="info-value">${roleNames[role] || role}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">考试日期：</span>
+            <span class="info-value">${new Date().toLocaleDateString('zh-CN')}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">考试时间：</span>
+            <span class="info-value">${new Date().toLocaleTimeString('zh-CN')}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">考试用时：</span>
+            <span class="info-value">${formatTime(duration)}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">工资提升：</span>
+            <span class="info-value" style="font-size: 20px; font-weight: bold;">
+              ${finalScore >= 90 ? '500元' : finalScore >= 80 ? '300元' : '0元（未达标）'}
+            </span>
+          </div>
+          
+          <div class="stamp">
+            <img src="/logo.png" alt="大唐环宇印章" />
+          </div>
+          
+          <div class="footer">
+            <p>大唐环宇名车维修中心</p>
+            <p>${new Date().toLocaleDateString('zh-CN')}</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 250);
+    } else {
+      alert('打印窗口打开失败，请检查浏览器设置');
+    }
+  };
+
   const handleAnswerChange = (index: number, answer: string) => {
     setAnswers((prev) => new Map(prev).set(index, answer));
   };
@@ -469,7 +590,7 @@ export default function ExamSystem() {
 
                 {/* 打印成绩单按钮 */}
                 <Button
-                  onClick={() => window.print()}
+                  onClick={printScore}
                   className="mt-4"
                   size="lg"
                 >
@@ -486,57 +607,6 @@ export default function ExamSystem() {
                   <Link href="/">
                     <Button>返回首页</Button>
                   </Link>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* 打印专用版本 */}
-            <Card className="print-score-card" style={{ display: 'none' }}>
-              <CardContent className="pt-6">
-                <div className="text-center mb-8">
-                  <img src="/logo.png" alt="大唐环宇" className="w-24 h-24 mx-auto mb-4 object-contain" />
-                  <h1 className="text-3xl font-bold mb-2">大唐环宇名车岗位技能考试得分</h1>
-                  <div className="w-32 h-1 bg-black mx-auto"></div>
-                </div>
-
-                <div className="space-y-4 text-lg">
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">姓名：</span>
-                    <span>{name}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">岗位：</span>
-                    <span>{roleNames[role] || role}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">考试日期：</span>
-                    <span>{new Date().toLocaleDateString('zh-CN')}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">考试时间：</span>
-                    <span>{new Date().toLocaleTimeString('zh-CN')}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">考试用时：</span>
-                    <span>{formatTime(duration)}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-semibold">工资提升：</span>
-                    <span className="font-bold text-xl">
-                      {(score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 90 ? '500元' : (score + Array.from(subjectiveScores.values()).reduce((a, b) => a + b, 0)) >= 80 ? '300元' : '0元（未达标）'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-12 mb-8">
-                  <div className="flex justify-center">
-                    <img src="/logo.png" alt="大唐环宇印章" className="w-32 h-32 object-contain" />
-                  </div>
-                </div>
-
-                <div className="mt-8 text-center text-sm text-gray-500">
-                  <p>大唐环宇名车维修中心</p>
-                  <p>{new Date().toLocaleDateString('zh-CN')}</p>
                 </div>
               </CardContent>
             </Card>

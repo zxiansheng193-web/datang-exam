@@ -66,46 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <style>{`
-          @media print {
-            /* 设置打印页面 */
-            @page {
-              size: A4;
-              margin: 20mm;
-            }
-            
-            /* 重置页面 */
-            html, body {
-              margin: 0 !important;
-              padding: 0 !important;
-              height: auto !important;
-              overflow: visible !important;
-              background: white !important;
-            }
-            
-            /* 隐藏body的所有直接子元素（除了.print-score-card） */
-            body > *:not(.print-score-card) {
-              display: none !important;
-            }
-            
-            /* 显示打印卡片 */
-            .print-score-card {
-              display: block !important;
-              position: relative !important;
-              left: auto !important;
-              top: auto !important;
-              width: 100% !important;
-              height: auto !important;
-              padding: 20px !important;
-              margin: 0 !important;
-              background: white !important;
-              border: none !important;
-              box-shadow: none !important;
-              page-break-after: avoid !important;
-              page-break-before: avoid !important;
-            }
-          }
-        `}</style>
+        {children}
       </head>
       <body className={`antialiased`}>
         {isDev && <Inspector />}
