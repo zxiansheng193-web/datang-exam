@@ -65,6 +65,38 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <style>{`
+          @media print {
+            /* 隐藏所有不需要打印的元素 */
+            body > *:not(.print-score-card) {
+              display: none !important;
+            }
+            /* 隐藏body的直接子元素（除了print-score-card） */
+            body > div:not(.print-score-card) {
+              display: none !important;
+            }
+            /* 显示打印专用成绩单卡片 */
+            .print-score-card {
+              display: block !important;
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              padding: 40px !important;
+              background: white !important;
+              z-index: 10000 !important;
+              overflow: auto !important;
+            }
+            /* 隐藏打印版本中的按钮和隐藏类元素 */
+            .print-score-card button,
+            .print-score-card .print-hide {
+              display: none !important;
+            }
+          }
+        `}</style>
+      </head>
       <body className={`antialiased`}>
         {isDev && <Inspector />}
         {children}

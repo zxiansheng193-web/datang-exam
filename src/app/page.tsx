@@ -374,7 +374,7 @@ export default function ExamSystem() {
 
               <div className="text-center pt-4">
                 <Link
-                  href="/admin"
+                  href="/admin/login"
                   className="text-sm text-blue-600 hover:underline dark:text-blue-400"
                 >
                   进入后台管理系统
@@ -417,64 +417,111 @@ export default function ExamSystem() {
 
         {/* 提交结果 */}
         {examSubmitted && (
-          <Card className="mb-6 shadow-lg border-2 border-green-500">
-            <CardContent className="pt-6 text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">
-                客观题得分：{score}分 / 94分
-              </div>
+          <>
+            {/* 屏幕显示版本 */}
+            <Card className="mb-6 shadow-lg border-2 border-green-500 print-hide">
+              <CardContent className="pt-6 text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">
+                  客观题得分：{score}分 / 94分
+                </div>
 
-              {/* 主观题待评分提示 */}
-              <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
-                <AlertDescription className="text-base font-semibold text-yellow-700 dark:text-yellow-400">
-                  ⏳ 主观题（简答题）需后台人工评分，满分6分
-                </AlertDescription>
-              </Alert>
-
-              {/* 工资提升提示 */}
-              {score >= 90 && (
-                <Alert className="mb-4 bg-green-50 dark:bg-green-900/20 border-green-500">
-                  <AlertDescription className="text-lg font-semibold text-green-700 dark:text-green-400">
-                    🎉 恭喜您！客观题得分优秀，工资提升500元！
+                {/* 主观题待评分提示 */}
+                <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
+                  <AlertDescription className="text-base font-semibold text-yellow-700 dark:text-yellow-400">
+                    ⏳ 主观题（简答题）需后台人工评分，满分6分
                   </AlertDescription>
                 </Alert>
-              )}
-              {score < 90 && score >= 80 && (
-                <Alert className="mb-4 bg-blue-50 dark:bg-blue-900/20 border-blue-500">
-                  <AlertDescription className="text-lg font-semibold text-blue-700 dark:text-blue-400">
-                    👍 继续努力！成绩良好，工资提升300元！
-                  </AlertDescription>
-                </Alert>
-              )}
-              {score < 80 && (
-                <Alert className="mb-4 bg-red-50 dark:bg-red-900/20 border-red-500">
-                  <AlertDescription className="text-lg font-semibold text-red-700 dark:text-red-400">
-                    ⚠️ 客观题成绩未达标，需要再次考试
-                  </AlertDescription>
-                </Alert>
-              )}
 
-              {/* 打印成绩单按钮 */}
-              <Button
-                onClick={() => window.print()}
-                className="mt-4"
-                size="lg"
-              >
-                打印成绩单
-              </Button>
+                {/* 工资提升提示 */}
+                {score >= 90 && (
+                  <Alert className="mb-4 bg-green-50 dark:bg-green-900/20 border-green-500">
+                    <AlertDescription className="text-lg font-semibold text-green-700 dark:text-green-400">
+                      🎉 恭喜您！客观题得分优秀，工资提升500元！
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {score < 90 && score >= 80 && (
+                  <Alert className="mb-4 bg-blue-50 dark:bg-blue-900/20 border-blue-500">
+                    <AlertDescription className="text-lg font-semibold text-blue-700 dark:text-blue-400">
+                      👍 继续努力！成绩良好，工资提升300元！
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {score < 80 && (
+                  <Alert className="mb-4 bg-red-50 dark:bg-red-900/20 border-red-500">
+                    <AlertDescription className="text-lg font-semibold text-red-700 dark:text-red-400">
+                      ⚠️ 客观题成绩未达标，需要再次考试
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-              <p className="text-gray-600 dark:text-gray-300 mt-4">
-                用时：{formatTime(duration)} | 题目数量：{currentQuestions.length}题
-              </p>
-              <div className="mt-4 space-x-2">
-                <Button onClick={resetExam} variant="outline">
-                  重新考试
+                {/* 打印成绩单按钮 */}
+                <Button
+                  onClick={() => window.print()}
+                  className="mt-4"
+                  size="lg"
+                >
+                  打印成绩单
                 </Button>
-                <Link href="/">
-                  <Button>返回首页</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+
+                <p className="text-gray-600 dark:text-gray-300 mt-4">
+                  用时：{formatTime(duration)} | 题目数量：{currentQuestions.length}题
+                </p>
+                <div className="mt-4 space-x-2">
+                  <Button onClick={resetExam} variant="outline">
+                    重新考试
+                  </Button>
+                  <Link href="/">
+                    <Button>返回首页</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 打印专用版本 */}
+            <Card className="print-score-card hidden">
+              <CardContent className="pt-6">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold mb-2">大唐环宇名车岗位技能考试成绩单</h1>
+                  <div className="w-32 h-1 bg-black mx-auto"></div>
+                </div>
+
+                <div className="space-y-4 text-lg">
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">姓名：</span>
+                    <span>{name}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">岗位：</span>
+                    <span>{roleNames[role] || role}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">考试日期：</span>
+                    <span>{new Date().toLocaleDateString('zh-CN')}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">考试时间：</span>
+                    <span>{new Date().toLocaleTimeString('zh-CN')}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">考试用时：</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-semibold">工资提升：</span>
+                    <span className="font-bold text-xl">
+                      {score >= 90 ? '500元' : score >= 80 ? '300元' : '0元（未达标）'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-8 text-center text-sm text-gray-500">
+                  <p>大唐环宇名车维修中心</p>
+                  <p>{new Date().toLocaleDateString('zh-CN')}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </>
         )}
 
         {/* 提交按钮 */}

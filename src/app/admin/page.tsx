@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+
+const ADMIN_PASSWORD = '888888'; // 后台密码，可以修改
 
 interface ExamRecord {
   id: number;
@@ -33,6 +36,7 @@ const roleNames: { [key: string]: string } = {
 };
 
 export default function AdminPage() {
+  const router = useRouter();
   const [records, setRecords] = useState<ExamRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState<ExamRecord | null>(null);
@@ -50,8 +54,28 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    // 验证密码
+    const auth = localStorage.getItem('adminAuth');
+    const authTime = localStorage.getItem('adminAuthTime');
+    
+    if (!auth || auth !== 'true') {
+      router.push('/admin/login');
+      return;
+    }
+    
+    // 检查会话是否过期（24小时）
+    if (authTime) {
+      const elapsed = Date.now() - parseInt(authTime);
+      if (elapsed > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminAuthTime');
+        router.push('/admin/login');
+        return;
+      }
+    }
+
     fetchRecords();
-  }, []);
+  }, [router]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -121,6 +145,16 @@ export default function AdminPage() {
               <div className="flex gap-3">
                 <Button onClick={fetchRecords} variant="outline">
                   刷新数据
+                </Button>
+                <Button
+                  onClick={() => {
+                    localStorage.removeItem('adminAuth');
+                    localStorage.removeItem('adminAuthTime');
+                    router.push('/');
+                  }}
+                  variant="outline"
+                >
+                  退出登录
                 </Button>
                 <Link href="/">
                   <Button>返回考试页面</Button>
