@@ -491,7 +491,7 @@ export default function ExamSystem() {
             </Card>
 
             {/* 打印专用版本 */}
-            <Card className="print-score-card" style={{ display: 'none' }}>
+            <Card className="print-score-card" style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
               <CardContent className="pt-6">
                 <div className="text-center mb-8">
                   <img src="/logo.png" alt="大唐环宇" className="w-24 h-24 mx-auto mb-4 object-contain" />
