@@ -68,6 +68,12 @@ export default function RootLayout({
       <head>
         <style>{`
           @media print {
+            /* 设置打印页面 */
+            @page {
+              size: A4;
+              margin: 20mm;
+            }
+            
             /* 重置页面 */
             html, body {
               margin: 0 !important;
@@ -78,12 +84,18 @@ export default function RootLayout({
               background: white !important;
             }
             
-            /* 隐藏所有非打印元素 */
-            body > *:not(.print-score-card) {
-              display: none !important;
+            /* 隐藏所有元素 */
+            body * {
+              visibility: hidden;
             }
             
             /* 只显示打印卡片及其内容 */
+            .print-score-card,
+            .print-score-card * {
+              visibility: visible;
+            }
+            
+            /* 定位打印卡片 */
             .print-score-card {
               display: block !important;
               position: relative !important;
@@ -92,20 +104,13 @@ export default function RootLayout({
               width: 100% !important;
               height: auto !important;
               min-height: auto !important;
-              max-height: 100vh !important;
               padding: 20px !important;
               margin: 0 !important;
               background: white !important;
               border: none !important;
               box-shadow: none !important;
-              visibility: visible !important;
               page-break-after: avoid !important;
               page-break-before: avoid !important;
-            }
-            
-            /* 确保打印卡片内的所有内容可见 */
-            .print-score-card * {
-              visibility: visible !important;
             }
             
             /* 确保背景色打印 */
@@ -118,12 +123,6 @@ export default function RootLayout({
             .print-score-card,
             .print-score-card * {
               page-break-inside: avoid !important;
-            }
-            
-            /* 设置打印页面 */
-            @page {
-              size: A4;
-              margin: 20mm;
             }
           }
         `}</style>
