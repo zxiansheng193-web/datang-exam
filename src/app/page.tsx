@@ -318,9 +318,12 @@ export default function ExamSystem() {
         <div className="max-w-4xl mx-auto">
           <Card className="shadow-xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold text-blue-900 dark:text-blue-100">
-                🚗 大唐环宇名车岗位技能考试系统
-              </CardTitle>
+              <div className="flex flex-col items-center gap-4">
+                <img src="/logo.png" alt="唐宇大环" className="w-24 h-24 object-contain" />
+                <CardTitle className="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                  大唐环宇名车岗位技能考试系统
+                </CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div className="space-y-2">
