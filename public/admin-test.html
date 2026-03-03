@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台测试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .info {
+            color: blue;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 后台管理系统测试工具</h1>
+    
+    <div class="section">
+        <h2>1. 检查登录状态</h2>
+        <button onclick="checkAuth()">检查登录状态</button>
+        <button onclick="setAuth()">设置登录状态</button>
+        <button onclick="clearAuth()">清除登录状态</button>
+        <pre id="authResult">点击按钮检查登录状态</pre>
+    </div>
+
+    <div class="section">
+        <h2>2. 访问测试</h2>
+        <button onclick="testLogin()">测试登录页面</button>
+        <button onclick="testAdmin()">测试后台页面</button>
+        <button onclick="testAPI()">测试API接口</button>
+        <pre id="testResult">点击按钮进行测试</pre>
+    </div>
+
+    <div class="section">
+        <h2>3. 使用说明</h2>
+        <ol>
+            <li>首先点击"设置登录状态"模拟登录成功</li>
+            <li>然后点击"测试后台页面"查看后台是否正常显示</li>
+            <li>如果后台页面显示"正在验证身份..."并跳转到登录页面，说明认证逻辑正常</li>
+            <li>点击"测试API接口"检查数据库连接是否正常</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>4. 故障排除</h2>
+        <ul>
+            <li>如果后台页面一直显示"正在验证身份..."，可能是localStorage被禁用或页面加载异常</li>
+            <li>如果API测试失败，说明数据库连接有问题，需要配置Supabase</li>
+            <li>如果登录页面无法访问，说明路由配置有问题</li>
+        </ul>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const auth = localStorage.getItem('adminAuth');
+            const authTime = localStorage.getItem('adminAuthTime');
+            const result = {
+                '登录状态': auth === 'true' ? '已登录' : '未登录',
+                '登录时间': authTime ? new Date(parseInt(authTime)).toLocaleString('zh-CN') : '无',
+                '会话是否过期': authTime ? (Date.now() - parseInt(authTime) > 24 * 60 * 60 * 1000 ? '已过期' : '有效') : '无'
+            };
+            document.getElementById('authResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        function setAuth() {
+            localStorage.setItem('adminAuth', 'true');
+            localStorage.setItem('adminAuthTime', Date.now().toString());
+            document.getElementById('authResult').textContent = '✅ 登录状态已设置';
+            checkAuth();
+        }
+
+        function clearAuth() {
+            localStorage.removeItem('adminAuth');
+            localStorage.removeItem('adminAuthTime');
+            document.getElementById('authResult').textContent = '❌ 登录状态已清除';
+            checkAuth();
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch('/admin/login');
+                const text = await response.text();
+                const success = text.includes('后台管理系统登录');
+                document.getElementById('testResult').textContent = 
+                    success ? '✅ 登录页面正常' : '❌ 登录页面异常';
+            } catch (error) {
+                document.getElementById('testResult').textContent = '❌ 测试失败: ' + error.message;
+            }
+        }
+
+        async function testAdmin() {
+            try {
+                const response = await fetch('/admin');
+                const text = await response.text();
+                const success = text.includes('正在验证身份') || text.includes('考试记录管理后台');
+                document.getElementById('testResult').textContent = 
+                    success ? '✅ 后台页面可以访问' : '❌ 后台页面异常';
+            } catch (error) {
+                document.getElementById('testResult').textContent = '❌ 测试失败: ' + error.message;
+            }
+        }
+
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/exams');
+                const data = await response.json();
+                document.getElementById('testResult').textContent = 
+                    response.ok ? '✅ API正常，返回数据: ' + JSON.stringify(data) : '❌ API异常: ' + JSON.stringify(data);
+            } catch (error) {
+                document.getElementById('testResult').textContent = '❌ API测试失败: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -39,6 +39,8 @@ export default function AdminPage() {
   const router = useRouter();
   const [records, setRecords] = useState<ExamRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authenticating, setAuthenticating] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ExamRecord | null>(null);
 
   const fetchRecords = async () => {
@@ -54,12 +56,21 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) {
+      return; // 等待组件挂载
+    }
+
     // 验证密码
     const auth = localStorage.getItem('adminAuth');
     const authTime = localStorage.getItem('adminAuthTime');
     
     if (!auth || auth !== 'true') {
-      router.push('/admin/login');
+      // 未认证，立即跳转到登录页面
+      router.replace('/admin/login');
       return;
     }
     
@@ -69,13 +80,32 @@ export default function AdminPage() {
       if (elapsed > 24 * 60 * 60 * 1000) {
         localStorage.removeItem('adminAuth');
         localStorage.removeItem('adminAuthTime');
-        router.push('/admin/login');
+        router.replace('/admin/login');
         return;
       }
     }
 
+    // 认证成功，加载数据
+    setAuthenticating(false);
     fetchRecords();
-  }, [router]);
+  }, [router, isMounted]);
+
+  // 如果正在认证，显示加载状态
+  if (authenticating || !isMounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 flex items-center justify-center">
+        <Card className="w-full max-w-md shadow-xl">
+          <CardContent className="pt-6 text-center">
+            <div className="text-xl font-semibold mb-2">正在验证身份...</div>
+            <div className="text-sm text-gray-600">请稍候</div>
+            <p className="text-xs text-gray-500 mt-2">
+              如果长时间停留在本页面，请先登录：<a href="/admin/login" className="text-blue-600 hover:underline">点击登录</a>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
