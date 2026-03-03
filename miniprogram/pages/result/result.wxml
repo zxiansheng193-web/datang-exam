@@ -1,0 +1,41 @@
+<!--pages/result/result.wxml-->
+<view class="container">
+  <view class="result-card">
+    <view class="icon">🎉</view>
+    <text class="title">考试完成</text>
+
+    <view class="score-display">
+      <text class="score-value">{{score}}</text>
+      <text class="score-total">/ {{totalScore}}</text>
+    </view>
+
+    <text class="score-label">客观题得分</text>
+
+    <view class="info-row">
+      <text class="info-label">考生姓名：</text>
+      <text class="info-value">{{name}}</text>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">考试岗位：</text>
+      <text class="info-value">{{roleName}}</text>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">考试用时：</text>
+      <text class="info-value">{{duration}}</text>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">得分率：</text>
+      <text class="info-value {{scoreClass}}">{{percentage}}%</text>
+    </view>
+
+    <view class="btn" bindtap="backToHome">返回首页</view>
+    <view class="btn btn-outline" bindtap="viewAdmin">查看记录</view>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text">主观题请人工评阅</text>
+  </view>
+</view>

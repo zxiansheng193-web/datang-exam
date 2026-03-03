@@ -1,0 +1,70 @@
+<!--pages/admin/admin.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">📊 考试记录管理</text>
+    <text class="subtitle">查看和管理所有员工的考试记录</text>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-container">
+    <view class="stat-card stat-blue">
+      <text class="stat-label">总考试次数</text>
+      <text class="stat-value">{{totalRecords}}</text>
+    </view>
+    <view class="stat-card stat-green">
+      <text class="stat-label">平均得分率</text>
+      <text class="stat-value">{{avgPercentage}}%</text>
+    </view>
+    <view class="stat-card stat-purple">
+      <text class="stat-label">平均用时</text>
+      <text class="stat-value">{{avgDuration}}</text>
+    </view>
+    <view class="stat-card stat-orange">
+      <text class="stat-label">及格率</text>
+      <text class="stat-value">{{passRate}}%</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <view class="btn" bindtap="refreshData">刷新数据</view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="records-container">
+    <text class="section-title">考试记录</text>
+
+    <view wx:if="{{loading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{records.length === 0}}" class="empty">
+      <text>暂无考试记录</text>
+    </view>
+
+    <view
+      wx:for="{{records}}"
+      wx:key="id"
+      class="record-card"
+      bindtap="viewDetail"
+      data-record="{{item}}"
+    >
+      <view class="record-header">
+        <view class="record-name">{{item.name}}</view>
+        <view class="badge {{item.badgeClass}}">{{item.percentage}}%</view>
+      </view>
+
+      <view class="record-info">
+        <text class="info-item">岗位：{{item.roleName}}</text>
+        <text class="info-item">得分：{{item.score}}/{{item.totalScore}}</text>
+      </view>
+
+      <view class="record-info">
+        <text class="info-item">用时：{{item.duration}}</text>
+        <text class="info-item">{{item.submitTime}}</text>
+      </view>
+
+      <view class="record-arrow">›</view>
+    </view>
+  </view>
+</view>

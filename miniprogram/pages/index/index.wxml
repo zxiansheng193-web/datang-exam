@@ -1,0 +1,48 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">🚗 大唐环宇名车</text>
+    <text class="subtitle">岗位技能考试系统</text>
+  </view>
+
+  <view class="card">
+    <text class="card-title">考试信息</text>
+
+    <view class="form-item">
+      <text class="label">姓名 *</text>
+      <input
+        class="input"
+        placeholder="请输入您的姓名"
+        value="{{name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">选择岗位 *</text>
+      <picker
+        mode="selector"
+        range="{{roleOptions}}"
+        range-key="label"
+        value="{{roleIndex}}"
+        bindchange="onRoleChange"
+      >
+        <view class="input picker-text">{{roleOptions[roleIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="info-box">
+      <text class="info-title">📋 考试说明</text>
+      <text class="info-item">• 题目数量：{{questionCount}}题</text>
+      <text class="info-item">• 客观题自动评分</text>
+      <text class="info-item">• 主观题需人工评阅</text>
+      <text class="info-item">• 考试时间不限</text>
+    </view>
+
+    <view class="btn" bindtap="startExam">开始考试</view>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text">大唐环宇名车 您身边的汽车养护专家</text>
+  </view>
+</view>

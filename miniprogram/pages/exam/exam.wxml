@@ -1,0 +1,142 @@
+<!--pages/exam/exam.wxml-->
+<view class="container">
+  <!-- 考试头部 -->
+  <view class="exam-header">
+    <view class="header-left">
+      <text class="role-name">{{roleName}}</text>
+      <text class="user-name">{{name}}</text>
+    </view>
+    <view class="header-right">
+      <text class="timer">{{timer}}</text>
+      <text class="timer-label">用时</text>
+    </view>
+  </view>
+
+  <!-- 题目列表 -->
+  <scroll-view scroll-y class="question-list" scroll-into-view="scrollToView">
+    <view
+      wx:for="{{questions}}"
+      wx:key="index"
+      id="question-{{index}}"
+      class="question-card {{submitted ? 'submitted' : ''}}"
+    >
+      <!-- 题目类型标签 -->
+      <view class="question-type">
+        <text class="badge">{{item.typeName}}</text>
+        <text class="score">分值：{{item.score}}分</text>
+      </view>
+
+      <!-- 题目内容 -->
+      <view class="question-content">
+        <text class="question-text">{{index + 1}}. {{item.question}}</text>
+      </view>
+
+      <!-- 单选题选项 -->
+      <view wx:if="{{item.type === 1}}" class="options">
+        <view
+          wx:for="{{item.options}}"
+          wx:for-item="option"
+          wx:for-index="optIndex"
+          wx:key="optIndex"
+          class="option {{isAnswerSelected(index, optIndex) ? 'selected' : ''}}"
+          data-index="{{index}}"
+          data-opt="{{optIndex}}"
+          bindtap="selectOption"
+        >
+          <view class="option-label">{{optionLabels[optIndex]}}</view>
+          <view class="option-text">{{option}}</view>
+        </view>
+      </view>
+
+      <!-- 多选题选项 -->
+      <view wx:if="{{item.type === 2}}" class="options">
+        <view
+          wx:for="{{item.options}}"
+          wx:for-item="option"
+          wx:for-index="optIndex"
+          wx:key="optIndex"
+          class="option {{isAnswerSelected(index, optIndex) ? 'selected' : ''}}"
+          data-index="{{index}}"
+          data-opt="{{optIndex}}"
+          bindtap="toggleMultiOption"
+        >
+          <view class="option-checkbox">{{isAnswerSelected(index, optIndex) ? '✓' : ''}}</view>
+          <view class="option-label">{{optionLabels[optIndex]}}</view>
+          <view class="option-text">{{option}}</view>
+        </view>
+      </view>
+
+      <!-- 判断题选项 -->
+      <view wx:if="{{item.type === 3}}" class="options">
+        <view
+          class="option {{isAnswerSelected(index, 0) ? 'selected' : ''}}"
+          data-index="{{index}}"
+          data-value="对"
+          bindtap="selectJudge"
+        >
+          <text>对</text>
+        </view>
+        <view
+          class="option {{isAnswerSelected(index, 1) ? 'selected' : ''}}"
+          data-index="{{index}}"
+          data-value="错"
+          bindtap="selectJudge"
+        >
+          <text>错</text>
+        </view>
+      </view>
+
+      <!-- 填空题输入 -->
+      <view wx:if="{{item.type === 4}}" class="fill-inputs">
+        <view
+          wx:for="{{item.blanks}}"
+          wx:key="index2"
+          class="fill-input-wrapper"
+        >
+          <input
+            class="fill-input"
+            placeholder="填空 {{index2 + 1}}"
+            value="{{getFillAnswer(index, index2)}}"
+            data-q="{{index}}"
+            data-i="{{index2}}"
+            bindinput="onFillInput"
+            disabled="{{submitted}}"
+          />
+        </view>
+      </view>
+
+      <!-- 主观题输入 -->
+      <view wx:if="{{item.type >= 5}}" class="subjective-input">
+        <textarea
+          class="textarea"
+          placeholder="请输入答案"
+          value="{{getSubjectiveAnswer(index)}}"
+          data-index="{{index}}"
+          bindinput="onSubjectiveInput"
+          disabled="{{submitted}}"
+          maxlength="-1"
+          auto-height
+        />
+      </view>
+
+      <!-- 答案解析（提交后显示） -->
+      <view wx:if="{{submitted && item.type <= 4}}" class="answer-box">
+        <text class="answer-label">您的答案：{{getUserAnswer(index) || '未作答'}}</text>
+        <text class="answer-correct">正确答案：{{item.correctAnswerText}}</text>
+        <text wx:if="{{item.explanation}}" class="answer-explanation">解析：{{item.explanation}}</text>
+      </view>
+
+      <view wx:if="{{submitted && item.type > 4}}" class="answer-box">
+        <text class="answer-label">您的答案：</text>
+        <text class="answer-value">{{getUserAnswer(index) || '未作答'}}</text>
+        <text class="answer-correct">参考答案：{{item.correctAnswerText}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部提交按钮 -->
+  <view wx:if="{{!submitted}}" class="bottom-bar">
+    <view class="btn btn-outline" bindtap="cancelExam">取消考试</view>
+    <view class="btn" bindtap="submitExam">提交试卷</view>
+  </view>
+</view>

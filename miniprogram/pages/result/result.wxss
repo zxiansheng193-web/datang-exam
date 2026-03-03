@@ -1,0 +1,80 @@
+/* pages/result/result.wxss */
+.result-card {
+  text-align: center;
+  padding: 60rpx 30rpx;
+}
+
+.icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 60rpx;
+}
+
+.score-display {
+  margin-bottom: 30rpx;
+}
+
+.score-value {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #1e3c72;
+}
+
+.score-total {
+  font-size: 40rpx;
+  color: #999;
+}
+
+.score-label {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.info-value.success {
+  color: #2e7d32;
+}
+
+.info-value.warning {
+  color: #e65100;
+}
+
+.info-value.danger {
+  color: #c62828;
+}
+
+.footer {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.footer-text {
+  font-size: 24rpx;
+  color: #999;
+}

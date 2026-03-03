@@ -1,0 +1,40 @@
+<!--pages/admin/detail/detail.wxml-->
+<view class="container">
+  <view class="detail-header">
+    <text class="name">{{name}}</text>
+    <text class="role">{{roleName}}</text>
+  </view>
+
+  <!-- 分数卡片 -->
+  <view class="score-card {{scoreClass}}">
+    <text class="score-value">{{score}}/{{totalScore}}</text>
+    <text class="score-label">客观题得分 ({{percentage}}%)</text>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <text class="card-title">考试信息</text>
+    <view class="info-row">
+      <text class="info-label">提交时间</text>
+      <text class="info-value">{{submitTime}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">考试用时</text>
+      <text class="info-value">{{duration}}</text>
+    </view>
+  </view>
+
+  <!-- 答题记录 -->
+  <view class="card">
+    <text class="card-title">答题记录</text>
+
+    <view
+      wx:for="{{answers}}"
+      wx:key="index"
+      class="answer-item"
+    >
+      <text class="question-index">第 {{item.index + 1}} 题</text>
+      <text class="answer-content">作答：{{item.answer || '未作答'}}</text>
+    </view>
+  </view>
+</view>

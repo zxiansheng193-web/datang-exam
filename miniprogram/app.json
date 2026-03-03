@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/exam/exam",
+    "pages/result/result",
+    "pages/admin/admin",
+    "pages/admin/detail/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1e3c72",
+    "navigationBarTitleText": "大唐环宇名车考试",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#1e3c72",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "考试",
+        "iconPath": "images/exam.png",
+        "selectedIconPath": "images/exam-active.png"
+      },
+      {
+        "pagePath": "pages/admin/admin",
+        "text": "管理",
+        "iconPath": "images/admin.png",
+        "selectedIconPath": "images/admin-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

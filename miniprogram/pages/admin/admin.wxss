@@ -1,0 +1,133 @@
+/* pages/admin/admin.wxss */
+.header {
+  text-align: center;
+  padding: 40rpx 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  margin: -30rpx -30rpx 30rpx -30rpx;
+  padding: 60rpx 30rpx;
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.subtitle {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.stat-card {
+  padding: 30rpx 20rpx;
+  border-radius: 16rpx;
+  text-align: center;
+}
+
+.stat-blue {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.stat-green {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: #fff;
+}
+
+.stat-purple {
+  background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+  color: #fff;
+}
+
+.stat-orange {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+}
+
+.stat-label {
+  display: block;
+  font-size: 24rpx;
+  opacity: 0.9;
+  margin-bottom: 8rpx;
+}
+
+.stat-value {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.action-bar {
+  margin-bottom: 30rpx;
+}
+
+.records-container {
+  padding-bottom: 30rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+}
+
+.record-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.record-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.record-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.info-item {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.record-arrow {
+  position: absolute;
+  right: 30rpx;
+  bottom: 30rpx;
+  font-size: 40rpx;
+  color: #ddd;
+  font-weight: bold;
+}

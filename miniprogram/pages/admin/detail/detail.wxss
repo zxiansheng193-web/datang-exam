@@ -1,0 +1,100 @@
+/* pages/admin/detail/detail.wxss */
+.detail-header {
+  text-align: center;
+  padding: 40rpx 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  margin: -30rpx -30rpx 30rpx -30rpx;
+  padding: 60rpx 30rpx;
+}
+
+.name {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.role {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.score-card {
+  text-align: center;
+  padding: 50rpx 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+}
+
+.score-card.success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: #fff;
+}
+
+.score-card.warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+}
+
+.score-card.danger {
+  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+  color: #fff;
+}
+
+.score-value {
+  display: block;
+  font-size: 56rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.score-label {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.answer-item {
+  background: #f8f9fa;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.question-index {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.answer-content {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
