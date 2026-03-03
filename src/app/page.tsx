@@ -29,19 +29,34 @@ export default function ExamSystem() {
   const [totalScore, setTotalScore] = useState(0);
   const [subjectiveScores, setSubjectiveScores] = useState<Map<number, number>>(new Map()); // 主观题得分
   const [duration, setDuration] = useState(0);
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(3600); // 60分钟倒计时（3600秒）
+  const [timeUp, setTimeUp] = useState(false); // 时间到标志
   const [loading, setLoading] = useState(false);
 
-  // 计时器
+  // 计时器（60分钟倒计时）
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (examStarted && !examSubmitted) {
+    if (examStarted && !examSubmitted && !timeUp && timer > 0) {
       interval = setInterval(() => {
-        setTimer((prev) => prev + 1);
+        setTimer((prev) => {
+          if (prev <= 1) {
+            setTimeUp(true);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [examStarted, examSubmitted]);
+  }, [examStarted, examSubmitted, timeUp, timer]);
+
+  // 时间到自动提交
+  useEffect(() => {
+    if (timeUp && examStarted && !examSubmitted) {
+      alert('考试时间已到，系统将自动提交试卷！');
+      submitExam();
+    }
+  }, [timeUp, examStarted, examSubmitted]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -65,7 +80,8 @@ export default function ExamSystem() {
     setExamSubmitted(false);
     setAnswers(new Map());
     setScore(0);
-    setTimer(0);
+    setTimer(3600); // 重置为60分钟
+    setTimeUp(false);
   };
 
   const resetExam = () => {
@@ -74,8 +90,9 @@ export default function ExamSystem() {
     setCurrentQuestions([]);
     setAnswers(new Map());
     setScore(0);
-    setTimer(0);
+    setTimer(3600); // 重置为60分钟
     setDuration(0);
+    setTimeUp(false);
   };
 
   const printScore = () => {
@@ -274,7 +291,7 @@ export default function ExamSystem() {
       // 总分已经是100分，直接使用实际得分
       setScore(earnedScore);
       setTotalScore(100);
-      setDuration(timer);
+      setDuration(3600 - timer); // 计算实际用时（60分钟 - 剩余时间）
       setExamSubmitted(true);
 
       // 保存考试记录（包含主观题答案）
@@ -517,7 +534,7 @@ export default function ExamSystem() {
               <div className="bg-blue-50 dark:bg-gray-800 p-4 rounded-lg">
                 <h3 className="font-semibold mb-2">考试说明：</h3>
                 <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                  <li>• 考试时间不限，请合理安排时间</li>
+                  <li>• 考试时间限制：60分钟</li>
                   <li>• 客观题系统自动评分，主观题需人工评阅</li>
                   <li>• 提交后将自动保存考试记录</li>
                   <li>• 请认真作答，确保信息准确</li>
@@ -554,10 +571,20 @@ export default function ExamSystem() {
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-mono font-bold text-red-600">
-                  {formatTime(timer)}
+                <div className={`text-2xl font-mono font-bold ${timer <= 600 ? 'text-red-600 animate-pulse' : 'text-green-600'}`}>
+                  剩余时间：{formatTime(timer)}
                 </div>
-                <p className="text-xs text-muted-foreground">用时</p>
+                {timer <= 600 && (
+                  <p className="text-xs text-red-600 font-semibold mt-1">
+                    ⚠️ 考试时间不足10分钟，请尽快提交！
+                  </p>
+                )}
+                {timer <= 300 && (
+                  <p className="text-xs text-red-600 font-bold mt-1">
+                    🚨 考试时间不足5分钟，请立即提交！
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">考试时间限制60分钟</p>
               </div>
             </div>
           </CardContent>
