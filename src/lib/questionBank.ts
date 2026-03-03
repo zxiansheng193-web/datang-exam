@@ -80,7 +80,7 @@ export const questionBank: QuestionBank = {
     { type: 4, question: "客户投诉处理原则是耐心倾听、____、及时解决。", blanks: ["记录"], answer: ["记录"], score: 2, explanation: "投诉处理原则" },
   ],
 
-  // ========== 汽修工 ==========
+  // ========== 机修工 ==========
   mechanic: [
     // 单选题（20题，每题2分，共40分）
     { type: 1, question: "家用轿车轮胎的标准胎压范围通常为（ ）。", options: ["1.0-1.5bar", "2.2-2.5bar", "3.0-3.5bar", "4.0-4.5bar"], answer: "B", score: 2, explanation: "标准胎压范围" },
@@ -195,6 +195,6 @@ export const questionBank: QuestionBank = {
 
 export const roleNames: { [key: string]: string } = {
   reception: "前台接待顾问",
-  mechanic: "汽修工",
+  mechanic: "机修工",
   storekeeper: "库房管理员",
 };

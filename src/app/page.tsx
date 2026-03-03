@@ -178,6 +178,21 @@ export default function ExamSystem() {
             <img src="/logo.png" alt="大唐环宇印章" />
           </div>
           
+          <div style="display: flex; justify-content: space-between; margin-top: 80px; padding: 0 40px;">
+            <div style="text-align: center;">
+              <div style="border-top: 1px solid #000; width: 200px; margin: 0 auto 10px; padding-top: 10px; font-size: 18px;">
+                考试人员签字：
+              </div>
+              <div style="font-size: 16px; color: #666;">（请在此处签字）</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="border-top: 1px solid #000; width: 200px; margin: 0 auto 10px; padding-top: 10px; font-size: 18px;">
+                审核人员签字：
+              </div>
+              <div style="font-size: 16px; color: #666;">（请在此处签字）</div>
+            </div>
+          </div>
+          
           <div class="footer">
             <p>大唐环宇名车维修中心</p>
             <p>${new Date().toLocaleDateString('zh-CN')}</p>
@@ -494,7 +509,7 @@ export default function ExamSystem() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="reception">前台接待顾问</option>
-                  <option value="mechanic">汽修工</option>
+                  <option value="mechanic">机修工</option>
                   <option value="storekeeper">库房管理员</option>
                 </select>
               </div>
