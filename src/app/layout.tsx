@@ -68,39 +68,68 @@ export default function RootLayout({
       <head>
         <style>{`
           @media print {
-            /* 隐藏所有元素 */
-            body * {
-              visibility: hidden;
+            /* 重置页面 */
+            html, body {
+              margin: 0 !important;
+              padding: 0 !important;
+              height: auto !important;
+              min-height: auto !important;
+              overflow: visible !important;
+              background: white !important;
             }
-            /* 只显示打印成绩单卡片及其内容 */
-            .print-score-card,
-            .print-score-card * {
-              visibility: visible;
+            
+            /* 隐藏body的所有子元素，除了标记为打印的容器 */
+            body > * {
+              display: none !important;
             }
-            /* 定位打印成绩单卡片 - 强制覆盖hidden类 */
-            .print-score-card {
+            
+            /* 显示打印容器 */
+            [data-print="true"] {
               display: block !important;
               position: absolute !important;
               left: 0 !important;
               top: 0 !important;
               width: 100% !important;
               height: auto !important;
-              min-height: 100vh !important;
-              padding: 40px !important;
               background: white !important;
-              z-index: 10000 !important;
-              visibility: visible !important;
+              padding: 0 !important;
+              margin: 0 !important;
             }
+            
+            /* 隐藏打印容器内的所有子元素，除了打印卡片 */
+            [data-print="true"] > * {
+              display: none !important;
+            }
+            
+            /* 显示打印卡片 */
+            .print-score-card {
+              display: block !important;
+              position: relative !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              padding: 40px !important;
+              margin: 0 !important;
+              background: white !important;
+              border: none !important;
+              box-shadow: none !important;
+            }
+            
             /* 确保背景色打印 */
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
-            /* 隐藏滚动条和多余元素 */
-            body {
-              overflow: visible !important;
-              margin: 0 !important;
-              padding: 0 !important;
+            
+            /* 防止分页 */
+            .print-score-card,
+            .print-score-card * {
+              page-break-inside: avoid !important;
+            }
+            
+            /* 设置打印页面 */
+            @page {
+              size: A4;
+              margin: 20mm;
             }
           }
         `}</style>
