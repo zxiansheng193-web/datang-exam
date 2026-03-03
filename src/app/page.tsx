@@ -557,6 +557,28 @@ export default function ExamSystem() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+      {/* 悬浮计时器 - 固定在右上角 */}
+      <div className="fixed top-4 right-4 z-50 bg-white dark:bg-gray-800 shadow-lg rounded-lg px-6 py-3 border-2 border-blue-500">
+        <div className="text-center">
+          <div className={`text-3xl font-mono font-bold ${timer <= 600 ? 'text-red-600 animate-pulse' : 'text-green-600'}`}>
+            {formatTime(timer)}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+            剩余时间
+          </div>
+          {timer <= 600 && (
+            <div className="text-xs text-red-600 font-bold mt-1">
+              ⚠️ 请尽快提交
+            </div>
+          )}
+          {timer <= 300 && (
+            <div className="text-xs text-red-600 font-bold mt-1 animate-bounce">
+              🚨 时间不足5分钟！
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="max-w-4xl mx-auto">
         {/* 考试头部 */}
         <Card className="mb-6 shadow-lg">
@@ -569,22 +591,6 @@ export default function ExamSystem() {
                 <p className="text-sm text-muted-foreground">
                   题目数量：{currentQuestions.length}题
                 </p>
-              </div>
-              <div className="text-right">
-                <div className={`text-2xl font-mono font-bold ${timer <= 600 ? 'text-red-600 animate-pulse' : 'text-green-600'}`}>
-                  剩余时间：{formatTime(timer)}
-                </div>
-                {timer <= 600 && (
-                  <p className="text-xs text-red-600 font-semibold mt-1">
-                    ⚠️ 考试时间不足10分钟，请尽快提交！
-                  </p>
-                )}
-                {timer <= 300 && (
-                  <p className="text-xs text-red-600 font-bold mt-1">
-                    🚨 考试时间不足5分钟，请立即提交！
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">考试时间限制60分钟</p>
               </div>
             </div>
           </CardContent>
