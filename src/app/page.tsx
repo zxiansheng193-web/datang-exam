@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { questionBank, roleNames, type Question } from '@/lib/questionBank';
+import { questionBank, roleNames, type Question, getQuestionsForExam } from '@/lib/questionBank';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,7 +53,8 @@ export default function ExamSystem() {
       alert('请输入姓名');
       return;
     }
-    const questions = questionBank[role];
+    // 使用随机抽取题目功能（每次抽取45题）
+    const questions = getQuestionsForExam(String(role), 45);
     if (!questions || questions.length === 0) {
       alert('该岗位题库为空');
       return;
@@ -139,17 +140,20 @@ export default function ExamSystem() {
       setDuration(timer);
       setExamSubmitted(true);
 
-      // 保存考试记录
+      // 保存考试记录（包含主观题答案）
       await fetch('/api/exams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
           role,
-          score: earnedScore,
-          totalScore: total,
+          score: earnedScore, // 客观题得分
+          subjectiveScore: 0, // 主观题得分（初始为0，待后台评分）
+          totalScore: total, // 客观题总分
+          totalSubjectiveScore: 6, // 主观题总分（2道简答题，每题3分）
           duration: timer,
           answers: userAnswers,
+          needsGrading: true, // 标记为待评分
         }),
       });
     } catch (error) {
@@ -416,33 +420,49 @@ export default function ExamSystem() {
           <Card className="mb-6 shadow-lg border-2 border-green-500">
             <CardContent className="pt-6 text-center">
               <div className="text-4xl font-bold text-green-600 mb-2">
-                考试得分：{score}分
+                客观题得分：{score}分 / 94分
               </div>
 
+              {/* 主观题待评分提示 */}
+              <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
+                <AlertDescription className="text-base font-semibold text-yellow-700 dark:text-yellow-400">
+                  ⏳ 主观题（简答题）需后台人工评分，满分6分
+                </AlertDescription>
+              </Alert>
+
               {/* 工资提升提示 */}
-              {score >= 96 && (
+              {score >= 90 && (
                 <Alert className="mb-4 bg-green-50 dark:bg-green-900/20 border-green-500">
                   <AlertDescription className="text-lg font-semibold text-green-700 dark:text-green-400">
-                    🎉 恭喜您工资提升500元！
+                    🎉 恭喜您！客观题得分优秀，工资提升500元！
                   </AlertDescription>
                 </Alert>
               )}
-              {score >= 90 && score <= 95 && (
+              {score < 90 && score >= 80 && (
                 <Alert className="mb-4 bg-blue-50 dark:bg-blue-900/20 border-blue-500">
                   <AlertDescription className="text-lg font-semibold text-blue-700 dark:text-blue-400">
-                    🎊 恭喜您工资提升200元！
+                    👍 继续努力！成绩良好，工资提升300元！
                   </AlertDescription>
                 </Alert>
               )}
-              {score >= 80 && score <= 89 && (
-                <Alert className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500">
-                  <AlertDescription className="text-lg font-semibold text-yellow-700 dark:text-yellow-400">
-                    🎯 恭喜您工资提升100元！
+              {score < 80 && (
+                <Alert className="mb-4 bg-red-50 dark:bg-red-900/20 border-red-500">
+                  <AlertDescription className="text-lg font-semibold text-red-700 dark:text-red-400">
+                    ⚠️ 客观题成绩未达标，需要再次考试
                   </AlertDescription>
                 </Alert>
               )}
 
-              <p className="text-gray-600 dark:text-gray-300">
+              {/* 打印成绩单按钮 */}
+              <Button
+                onClick={() => window.print()}
+                className="mt-4"
+                size="lg"
+              >
+                打印成绩单
+              </Button>
+
+              <p className="text-gray-600 dark:text-gray-300 mt-4">
                 用时：{formatTime(duration)} | 题目数量：{currentQuestions.length}题
               </p>
               <div className="mt-4 space-x-2">

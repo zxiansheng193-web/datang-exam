@@ -7,6 +7,30 @@ export interface Question {
   score: number;
   explanation?: string;
   blanks?: string[];
+  subjectiveScore?: number; // 主观题得分（人工评分）
+}
+
+// 随机抽取题目函数
+export function getRandomQuestions(questions: Question[], count: number = 45): Question[] {
+  if (questions.length <= count) {
+    return questions;
+  }
+  
+  // Fisher-Yates 洗牌算法
+  const shuffled = [...questions];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
+}
+
+// 从完整题库中随机抽取
+export function getQuestionsForExam(role: string, count: number = 45): Question[] {
+  const { questionBankFull } = require('./questionBankFull');
+  const allQuestions = questionBankFull[role] || [];
+  return getRandomQuestions(allQuestions, count);
 }
 
 export interface QuestionBank {

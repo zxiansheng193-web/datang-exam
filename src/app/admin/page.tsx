@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,11 +15,15 @@ interface ExamRecord {
   id: number;
   name: string;
   role: string;
-  score: number;
-  totalScore: number;
+  score: number; // 客观题得分
+  subjectiveScore?: number; // 主观题得分
+  totalScore: number; // 客观题总分
+  totalSubjectiveScore?: number; // 主观题总分
   duration: number;
   submittedAt: string;
   answers: string;
+  needsGrading?: boolean; // 是否需要人工评分
+  gradedAt?: string; // 评分时间
 }
 
 const roleNames: { [key: string]: string } = {
@@ -76,6 +82,25 @@ export default function AdminPage() {
     if (percentage >= 80) return 'default';
     if (percentage >= 60) return 'secondary';
     return 'destructive';
+  };
+
+  const handleGradeSubjective = async (recordId: number, score: number) => {
+    try {
+      const res = await fetch('/api/exams/grade', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: recordId, subjectiveScore: score }),
+      });
+      if (!res.ok) {
+        alert('评分失败，请重试');
+        return;
+      }
+      await fetchRecords(); // 刷新数据
+      alert('评分成功！');
+    } catch (error) {
+      console.error('评分失败:', error);
+      alert('评分失败，请重试');
+    }
   };
 
   return (
@@ -201,69 +226,122 @@ export default function AdminPage() {
                       <TableCell>{formatTime(record.duration)}</TableCell>
                       <TableCell>{formatDate(record.submittedAt)}</TableCell>
                       <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setSelectedRecord(record)}
-                            >
-                              查看详情
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl max-h-[80vh]">
-                            <DialogHeader>
-                              <DialogTitle>考试详情 - {record.name}</DialogTitle>
-                            </DialogHeader>
-                            <ScrollArea className="h-[60vh] pr-4">
-                              <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <div className="text-sm text-gray-500">姓名</div>
-                                    <div className="font-semibold">{record.name}</div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">岗位</div>
-                                    <div className="font-semibold">
-                                      {roleNames[record.role] || record.role}
+                        <div className="flex gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setSelectedRecord(record)}
+                              >
+                                查看详情
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                              <DialogHeader>
+                                <DialogTitle>考试详情 - {record.name}</DialogTitle>
+                              </DialogHeader>
+                              <ScrollArea className="h-[60vh] pr-4">
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <div className="text-sm text-gray-500">姓名</div>
+                                      <div className="font-semibold">{record.name}</div>
                                     </div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">得分</div>
-                                    <div className={`font-semibold ${getScoreColor(record.score, record.totalScore)}`}>
-                                      {record.score}/{record.totalScore} (
-                                      {Math.round((record.score / record.totalScore) * 100)}%)
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">用时</div>
-                                    <div className="font-semibold">{formatTime(record.duration)}</div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">提交时间</div>
-                                    <div className="font-semibold">{formatDate(record.submittedAt)}</div>
-                                  </div>
-                                </div>
-
-                                <div className="border-t pt-4">
-                                  <h3 className="font-semibold mb-3">答题记录</h3>
-                                  <div className="space-y-3">
-                                    {JSON.parse(record.answers).map((item: any, idx: number) => (
-                                      <div key={idx} className="border rounded-lg p-3">
-                                        <div className="text-sm text-gray-500 mb-1">
-                                          第 {item.index + 1} 题
-                                        </div>
-                                        <div className="font-medium">
-                                          作答：{item.answer || '未作答'}
-                                        </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">岗位</div>
+                                      <div className="font-semibold">
+                                        {roleNames[record.role] || record.role}
                                       </div>
-                                    ))}
+                                    </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">客观题得分</div>
+                                      <div className={`font-semibold ${getScoreColor(record.score, record.totalScore)}`}>
+                                        {record.score}/{record.totalScore} (
+                                        {Math.round((record.score / record.totalScore) * 100)}%)
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">主观题得分</div>
+                                      <div className="font-semibold">
+                                        {record.subjectiveScore || 0}/{record.totalSubjectiveScore || 0}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">总分</div>
+                                      <div className="font-semibold text-xl">
+                                        {(record.score + (record.subjectiveScore || 0))}/{(record.totalScore || 100) + (record.totalSubjectiveScore || 0)}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">用时</div>
+                                      <div className="font-semibold">{formatTime(record.duration)}</div>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm text-gray-500">提交时间</div>
+                                      <div className="font-semibold">{formatDate(record.submittedAt)}</div>
+                                    </div>
+                                  </div>
+
+                                  <div className="border-t pt-4">
+                                    <h3 className="font-semibold mb-3">答题记录</h3>
+                                    <div className="space-y-3">
+                                      {JSON.parse(record.answers).map((item: any, idx: number) => (
+                                        <div key={idx} className="border rounded-lg p-3">
+                                          <div className="text-sm text-gray-500 mb-1">
+                                            第 {item.index + 1} 题
+                                          </div>
+                                          <div className="font-medium">
+                                            作答：{item.answer || '未作答'}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </ScrollArea>
-                          </DialogContent>
-                        </Dialog>
+                              </ScrollArea>
+                            </DialogContent>
+                          </Dialog>
+                          {record.needsGrading && (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="secondary" size="sm">
+                                  评分主观题
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>主观题评分 - {record.name}</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <Label htmlFor="subjectiveScore">主观题得分（满分：{record.totalSubjectiveScore || 6}分）</Label>
+                                    <Input
+                                      id="subjectiveScore"
+                                      type="number"
+                                      min={0}
+                                      max={record.totalSubjectiveScore || 6}
+                                      defaultValue={record.subjectiveScore || 0}
+                                    />
+                                  </div>
+                                  <Button
+                                    onClick={() => {
+                                      const input = document.getElementById('subjectiveScore') as HTMLInputElement;
+                                      const score = parseFloat(input.value);
+                                      if (isNaN(score) || score < 0 || score > (record.totalSubjectiveScore || 6)) {
+                                        alert('请输入有效的分数');
+                                        return;
+                                      }
+                                      handleGradeSubjective(record.id, score);
+                                    }}
+                                  >
+                                    提交评分
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

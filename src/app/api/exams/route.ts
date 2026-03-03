@@ -27,7 +27,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, role, score, totalScore, duration, answers } = body;
+    const { name, role, score, subjectiveScore, totalScore, totalSubjectiveScore, duration, answers, needsGrading } = body;
 
     if (!name || !role || score === undefined || !duration) {
       return NextResponse.json({ error: '缺少必要参数' }, { status: 400 });
@@ -38,10 +38,13 @@ export async function POST(request: NextRequest) {
       .insert({
         name: name.trim(),
         role,
-        score,
-        totalScore,
+        score, // 客观题得分
+        subjectiveScore: subjectiveScore || 0, // 主观题得分
+        totalScore, // 客观题总分
+        totalSubjectiveScore: totalSubjectiveScore || 0, // 主观题总分
         duration,
         answers: JSON.stringify(answers),
+        needsGrading: needsGrading !== undefined ? needsGrading : false, // 是否需要人工评分
       })
       .select()
       .single();
