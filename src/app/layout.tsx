@@ -78,40 +78,31 @@ export default function RootLayout({
               background: white !important;
             }
             
-            /* 隐藏body的所有子元素，除了标记为打印的容器 */
-            body > * {
-              display: none !important;
+            /* 隐藏所有元素 */
+            body * {
+              visibility: hidden;
             }
             
-            /* 显示打印容器 */
-            [data-print="true"] {
+            /* 只显示打印卡片及其内容 */
+            .print-score-card,
+            .print-score-card * {
+              visibility: visible;
+            }
+            
+            /* 定位打印卡片 */
+            .print-score-card {
               display: block !important;
-              position: absolute !important;
+              position: fixed !important;
               left: 0 !important;
               top: 0 !important;
               width: 100% !important;
-              height: auto !important;
-              background: white !important;
-              padding: 0 !important;
-              margin: 0 !important;
-            }
-            
-            /* 隐藏打印容器内的所有子元素，除了打印卡片 */
-            [data-print="true"] > * {
-              display: none !important;
-            }
-            
-            /* 显示打印卡片 */
-            .print-score-card {
-              display: block !important;
-              position: relative !important;
-              width: 100% !important;
-              max-width: 100% !important;
+              height: 100vh !important;
               padding: 40px !important;
               margin: 0 !important;
               background: white !important;
               border: none !important;
               box-shadow: none !important;
+              overflow: visible !important;
             }
             
             /* 确保背景色打印 */
